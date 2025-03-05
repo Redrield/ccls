@@ -1219,9 +1219,7 @@ IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const st
   auto pch = std::make_shared<PCHContainerOperations>();
   llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> fs = llvm::vfs::getRealFileSystem();
   std::shared_ptr<CompilerInvocation> ci = buildCompilerInvocation(main, args, fs);
-  // e.g. .s
-  if (!ci)
-    return {};
+  // e.g. .    return {};
   ok = false;
   // -fparse-all-comments enables documentation in the indexer and in
   // code completion.
@@ -1251,6 +1249,7 @@ IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const st
   clang->getDiagnostics().setIgnoreAllWarnings(true);
   clang->setTarget(TargetInfo::CreateTargetInfo(clang->getDiagnostics(), clang->getInvocation().TargetOpts));
   if (!clang->hasTarget())
+    LOG_S(ERROR) << "clang->hasTarget failed";
     return {};
   clang->getPreprocessorOpts().RetainRemappedFileBuffers = true;
   clang->createFileManager(fs);
@@ -1273,9 +1272,11 @@ IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const st
     llvm::CrashRecoveryContext crc;
     auto parse = [&]() {
       if (!action->BeginSourceFile(*clang, clang->getFrontendOpts().Inputs[0]))
+        LOG_S(ERROR) << "action->BeginSourceFile failure";
         return;
       if (llvm::Error e = action->Execute()) {
         reason = llvm::toString(std::move(e));
+        LOG_S(ERROR) << "action->Execute failure";
         return;
       }
       action->EndSourceFile();
@@ -1332,6 +1333,8 @@ IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const st
     }
     result.indexes.push_back(std::move(entry));
   }
+
+  LOG_S(ERROR) << "Got to the end of the function. Ok = " << ok;
 
   return result;
 }
