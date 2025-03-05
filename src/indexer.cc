@@ -1247,9 +1247,12 @@ IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const st
 #endif
       &dc, false);
   clang->getDiagnostics().setIgnoreAllWarnings(true);
-  clang->setTarget(TargetInfo::CreateTargetInfo(clang->getDiagnostics(), clang->getInvocation().TargetOpts));
+  auto ti = TargetInfo::CreateTargetInfo(clang->getDiagnostics(), clang->getInvocation().TargetOpts);
+  if(ti == nullptr) {
+    LOG_S(ERROR) << "TargetInfo::CreateTargetInfo GAVE NULLPTR";
+  }
+  clang->setTarget(ti);
   if (!clang->hasTarget())
-    LOG_S(ERROR) << "clang->hasTarget failed\n";
     return {};
   clang->getPreprocessorOpts().RetainRemappedFileBuffers = true;
   clang->createFileManager(fs);
@@ -1272,11 +1275,9 @@ IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const st
     llvm::CrashRecoveryContext crc;
     auto parse = [&]() {
       if (!action->BeginSourceFile(*clang, clang->getFrontendOpts().Inputs[0]))
-        LOG_S(ERROR) << "action->BeginSourceFile failure\n";
         return;
       if (llvm::Error e = action->Execute()) {
         reason = llvm::toString(std::move(e));
-        LOG_S(ERROR) << "action->Execute failure\n";
         return;
       }
       action->EndSourceFile();
