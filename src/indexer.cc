@@ -1212,6 +1212,14 @@ void init() {
   multiVersionMatcher = new GroupMatch(g_config->index.multiVersionWhitelist, g_config->index.multiVersionBlacklist);
 }
 
+class DiagHdlr : public clang::DiagnosticConsumer {
+  void HandleDiagnostic(DiagnosticsEngine::Level level, const clang::Diagnostic& info) override {
+    llvm::SmallString<16> out{};
+    info.FormatDiagnostic(out);
+    LOG_S(ERROR) << "LLVM DIAGNOSTIC " << out.c_str();
+  }
+};
+
 IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const std::string &opt_wdir,
                   const std::string &main, const std::vector<const char *> &args,
                   const std::vector<std::pair<std::string, std::string>> &remapped, bool no_linkage, bool &ok) {
@@ -1246,11 +1254,11 @@ IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const st
       *fs,
 #endif
       &dc, false);
+  clang->getDiagnostics().setClient(new DiagHdlr);
   clang->getDiagnostics().setIgnoreAllWarnings(true);
   auto ti = TargetInfo::CreateTargetInfo(clang->getDiagnostics(), clang->getInvocation().TargetOpts);
   if(ti == nullptr) {
     LOG_S(ERROR) << "TargetInfo::CreateTargetInfo GAVE NULLPTR. Triple=" << clang->getInvocation().getTargetOpts().Triple;
-    clang->getDiagnostics().dump();
 
   }
   clang->setTarget(ti);
