@@ -25,6 +25,7 @@
 #include <mutex>
 #include <shared_mutex>
 #include <thread>
+#include <iostream>
 #ifndef _WIN32
 #include <unistd.h>
 #endif
@@ -346,9 +347,10 @@ bool indexer_Parse(SemaManager *completion, WorkingFiles *wfiles, Project *proje
 
     if (!ok) {
       if (request.id.valid()) {
+        LOG_S(ERROR) << "AAAAAAAAAAAAAAAAAAA";
         ResponseError err;
         err.code = ErrorCode::InternalError;
-        err.message = "2failed to index " + path_to_index;
+        err.message = "failed to index " + path_to_index;
         pipeline::replyError(request.id, err);
       }
       return true;
