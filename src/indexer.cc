@@ -20,6 +20,7 @@
 #include <llvm/ADT/DenseSet.h>
 #include <llvm/Support/CrashRecoveryContext.h>
 #include <llvm/Support/Path.h>
+#include <llvm/TargetParser/Host.h>
 
 #include <algorithm>
 #include <inttypes.h>
@@ -1256,7 +1257,7 @@ IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const st
       &dc, false);
   clang->getDiagnostics().setClient(new DiagHdlr);
   clang->getDiagnostics().setIgnoreAllWarnings(true);
-  clang->getInvocation().getTargetOpts().Triple = getHostTriple();
+  clang->getInvocation().getTargetOpts().Triple = llvm::sys::getDefaultTargetTriple();
   auto ti = TargetInfo::CreateTargetInfo(clang->getDiagnostics(), clang->getInvocation().TargetOpts);
   if(ti == nullptr) {
     LOG_S(ERROR) << "TargetInfo::CreateTargetInfo GAVE NULLPTR. Triple=" << clang->getInvocation().getTargetOpts().Triple;

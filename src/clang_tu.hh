@@ -37,8 +37,6 @@ Range fromTokenRange(const clang::SourceManager &sm, const clang::LangOptions &l
 Range fromTokenRangeDefaulted(const clang::SourceManager &sm, const clang::LangOptions &lang, clang::SourceRange sr,
                               clang::FileID fid, Range range);
 
-std::string getHostTriple();
-
 std::unique_ptr<clang::CompilerInvocation> buildCompilerInvocation(const std::string &main,
                                                                    std::vector<const char *> args,
                                                                    llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> VFS);

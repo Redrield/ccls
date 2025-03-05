@@ -102,15 +102,6 @@ Range fromTokenRangeDefaulted(const SourceManager &sm, const LangOptions &lang, 
   return range;
 }
 
-std::string getHostTriple() { 
-    auto target_and_mode = driver::ToolChain::getTargetAndModeFromProgramName("clang"); 
-    if(!target_and_mode.TargetPrefix.empty()) {
-      return target_and_mode.TargetPrefix;
-    } else {
-      return "";
-    }
-}
-
 std::unique_ptr<CompilerInvocation> buildCompilerInvocation(const std::string &main, std::vector<const char *> args,
                                                             IntrusiveRefCntPtr<llvm::vfs::FileSystem> vfs) {
   std::string save = "-resource-dir=" + g_config->clang.resourceDir;
