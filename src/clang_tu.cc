@@ -20,6 +20,8 @@
 #endif
 #include <llvm/Support/Path.h>
 
+#include "log.hh"
+
 using namespace clang;
 
 namespace ccls {
@@ -110,8 +112,10 @@ std::unique_ptr<CompilerInvocation> buildCompilerInvocation(const std::string &m
   // require llvm::InitializeAllTargetInfos().
   auto target_and_mode = driver::ToolChain::getTargetAndModeFromProgramName(args[0]);
   if (target_and_mode.DriverMode)
+      LOG_S(ERROR) << "DriverMode=" << target_and_mode.DriverMode;
     args.insert(args.begin() + 1, target_and_mode.DriverMode);
   if (!target_and_mode.TargetPrefix.empty()) {
+      LOG_S(ERROR) << "TargetPrefix=" << target_and_mode.TargetPrefix;
     const char *arr[] = {"-target", target_and_mode.TargetPrefix.c_str()};
     args.insert(args.begin() + 1, std::begin(arr), std::end(arr));
   }
