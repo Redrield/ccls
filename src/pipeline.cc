@@ -347,7 +347,6 @@ bool indexer_Parse(SemaManager *completion, WorkingFiles *wfiles, Project *proje
 
     if (!ok) {
       if (request.id.valid()) {
-        LOG_S(ERROR) << "AAAAAAAAAAAAAAAAAAA";
         ResponseError err;
         err.code = ErrorCode::InternalError;
         err.message = "failed to index " + path_to_index;
