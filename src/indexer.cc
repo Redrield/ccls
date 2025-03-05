@@ -20,6 +20,7 @@
 #include <llvm/ADT/DenseSet.h>
 #include <llvm/Support/CrashRecoveryContext.h>
 #include <llvm/Support/Path.h>
+#include <llvm/TargetParser/Host.h>
 
 #include <algorithm>
 #include <inttypes.h>
@@ -1249,7 +1250,13 @@ IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const st
 #endif
       &dc, false);
   clang->getDiagnostics().setIgnoreAllWarnings(true);
-  clang->setTarget(TargetInfo::CreateTargetInfo(clang->getDiagnostics(), clang->getInvocation().TargetOpts));
+  auto ti = TargetInfo::CreateTargetInfo(clang->getDiagnostics(), clang->getInvocation().TargetOpts);
+  // Most likely an unknown target triple, replace with host target and try again.
+  if(ti == nullptr) {
+    clang->getInvocation().getTargetOpts().Triple = llvm::sys::getDefaultTargetTriple();
+    ti = TargetInfo::CreateTargetInfo(clang->getDiagnostics(), clang->getInvocation().TargetOpts);
+  }
+  clang->setTarget(ti);
   if (!clang->hasTarget())
     return {};
   clang->getPreprocessorOpts().RetainRemappedFileBuffers = true;
