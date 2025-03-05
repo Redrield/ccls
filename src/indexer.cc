@@ -1215,7 +1215,11 @@ void init() {
 IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const std::string &opt_wdir,
                   const std::string &main, const std::vector<const char *> &args,
                   const std::vector<std::pair<std::string, std::string>> &remapped, bool no_linkage, bool &ok) {
-  LOG_S(ERROR) << "START " << "MAIN=" << main << " END";
+  LOG_S(ERROR) << "START " << "MAIN=" << main;
+  for(const char* arg : args) {
+    LOG_S(ERROR) << " ARGn=" << arg;
+  }
+  LOG_S(ERROR) << " END";
   ok = true;
   auto pch = std::make_shared<PCHContainerOperations>();
   llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> fs = llvm::vfs::getRealFileSystem();
