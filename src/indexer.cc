@@ -1250,11 +1250,13 @@ IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const st
   auto ti = TargetInfo::CreateTargetInfo(clang->getDiagnostics(), clang->getInvocation().TargetOpts);
   if(ti == nullptr) {
     LOG_S(ERROR) << "TargetInfo::CreateTargetInfo GAVE NULLPTR. Triple=" << clang->getInvocation().getTargetOpts().Triple;
+    clang->getDiagnostics().dump();
 
   }
   clang->setTarget(ti);
-  if (!clang->hasTarget())
+  if (!clang->hasTarget()) {
     return {};
+  }
   clang->getPreprocessorOpts().RetainRemappedFileBuffers = true;
   clang->createFileManager(fs);
   clang->setSourceManager(new SourceManager(clang->getDiagnostics(), clang->getFileManager(), true));
