@@ -1249,7 +1249,8 @@ IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const st
   clang->getDiagnostics().setIgnoreAllWarnings(true);
   auto ti = TargetInfo::CreateTargetInfo(clang->getDiagnostics(), clang->getInvocation().TargetOpts);
   if(ti == nullptr) {
-    LOG_S(ERROR) << "TargetInfo::CreateTargetInfo GAVE NULLPTR";
+    LOG_S(ERROR) << "TargetInfo::CreateTargetInfo GAVE NULLPTR. Triple=" << clang->getInvocation().getTargetOpts().Triple;
+
   }
   clang->setTarget(ti);
   if (!clang->hasTarget())
