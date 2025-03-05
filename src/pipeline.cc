@@ -348,7 +348,7 @@ bool indexer_Parse(SemaManager *completion, WorkingFiles *wfiles, Project *proje
       if (request.id.valid()) {
         ResponseError err;
         err.code = ErrorCode::InternalError;
-        err.message = "failed to index " + path_to_index;
+        err.message = "2failed to index " + path_to_index;
         pipeline::replyError(request.id, err);
       }
       return true;
