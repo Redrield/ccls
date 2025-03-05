@@ -1256,7 +1256,7 @@ IndexResult index(SemaManager *manager, WorkingFiles *wfiles, VFS *vfs, const st
       &dc, false);
   clang->getDiagnostics().setClient(new DiagHdlr);
   clang->getDiagnostics().setIgnoreAllWarnings(true);
-  clang->getInvocation().getTargetOpts().Triple = clang->getInvocation().getTargetOpts().HostTriple;
+  clang->getInvocation().getTargetOpts().Triple = getHostTriple();
   auto ti = TargetInfo::CreateTargetInfo(clang->getDiagnostics(), clang->getInvocation().TargetOpts);
   if(ti == nullptr) {
     LOG_S(ERROR) << "TargetInfo::CreateTargetInfo GAVE NULLPTR. Triple=" << clang->getInvocation().getTargetOpts().Triple;

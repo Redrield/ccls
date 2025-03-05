@@ -102,6 +102,15 @@ Range fromTokenRangeDefaulted(const SourceManager &sm, const LangOptions &lang, 
   return range;
 }
 
+std::string getHostTriple() { 
+    auto target_and_mode = driver::ToolChain::getTargetAndModeFromProgramName("clang"); 
+    if(!target_and_mode.TargetPrefix.empty()) {
+      return target_and_mode.TargetPrefix;
+    } else {
+      return "";
+    }
+}
+
 std::unique_ptr<CompilerInvocation> buildCompilerInvocation(const std::string &main, std::vector<const char *> args,
                                                             IntrusiveRefCntPtr<llvm::vfs::FileSystem> vfs) {
   std::string save = "-resource-dir=" + g_config->clang.resourceDir;
@@ -112,10 +121,10 @@ std::unique_ptr<CompilerInvocation> buildCompilerInvocation(const std::string &m
   // require llvm::InitializeAllTargetInfos().
   auto target_and_mode = driver::ToolChain::getTargetAndModeFromProgramName(args[0]);
   if (target_and_mode.DriverMode)
-      LOG_S(ERROR) << "DriverMode=" << target_and_mode.DriverMode;
-    args.insert(args.begin() + 1, target_and_mode.DriverMode);
+    LOG_S(ERROR) << "DriverMode=" << target_and_mode.DriverMode;
+  args.insert(args.begin() + 1, target_and_mode.DriverMode);
   if (!target_and_mode.TargetPrefix.empty()) {
-      LOG_S(ERROR) << "TargetPrefix=" << target_and_mode.TargetPrefix;
+    LOG_S(ERROR) << "TargetPrefix=" << target_and_mode.TargetPrefix;
     const char *arr[] = {"-target", target_and_mode.TargetPrefix.c_str()};
     args.insert(args.begin() + 1, std::begin(arr), std::end(arr));
   }
